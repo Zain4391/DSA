@@ -1,103 +1,53 @@
-#include<iostream>
-#include<algorithm>
+#include <iostream>
+#include <list>
+#include <vector>
+#include <stack>
 using namespace std;
 
-class Node
+class Graph
 {
-    public:
+    int V;
+    list<int> *adj_list;
 
-    int data;
-    Node *next;
-
-    Node()
+public:
+    Graph(int n)
     {
-        next=NULL;
+        V = n;
+        adj_list = new list<int>[V];
     }
 
-    Node(int x)
+    void addEdge(int v, int w)
     {
-        this->data=x;
-        next=NULL;
-    }
-};
-
-class LinkedList
-{
-    public:
-    Node* head;
-
-    LinkedList()
-    {
-        head = NULL;
+        adj_list[v].push_back(w);
+        adj_list[w].push_back(v); // For an undirected graph
     }
 
-    void insert(int data)
+    void dfs(int i)
     {
-        Node *newNode = new Node(data);
-
-        if(head == NULL)
-        {
-            head = newNode;
-            return;
-        }
-        else
-        {
-            Node *temp = head;
-            while(temp->next != NULL)
+        static vector<bool> visited(V,false); //only initialize once
+        visited[i] = true;
+        cout<<i<<" ";
+            for(auto it = adj_list[i].begin(); it!= adj_list[i].end();it++)
             {
-                temp = temp->next;
+                if(!visited[*it])
+                {
+                    dfs(*it);
+                }
             }
-
-            temp->next = newNode;
-        }
     }
-
-    Node*reverse_list(Node *headref)
-    {
-        Node *current = headref;
-        Node *prev = NULL;
-        Node *next = NULL;
-        // reverse the list in place
-        while (current != NULL)
-        {
-            next = current->next;
-            current->next = prev;
-            prev = current;
-            current = next;
-        }
-        
-        head = prev;
-
-        return head;
-    }
-
 };
-
-void display(Node *headref)
-{
-    Node *current = headref;
-    while(current!=NULL)
-    {
-         cout<<current->data<<" -> ";
-        current=current->next;
-    }
-    cout<<"NULL";
-    cout<<endl;
-}
 
 int main()
 {
-    LinkedList mylist;
-    mylist.insert(1);
-    mylist.insert(2);
-    mylist.insert(3);
-    mylist.insert(4);
-    mylist.insert(5);
+    Graph g(6);
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(2, 5);
 
-    display(mylist.head);
-    mylist.reverse_list(mylist.head);
-    display(mylist.head);
+    cout << "DFS starting from vertex 0:" << endl;
+    g.dfs(0);
 
     return 0;
-    
 }
